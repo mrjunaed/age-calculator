@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .age-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .age-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .age-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .age-detail-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .stage-badge {
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .stage-child {
+            background: #ffd93d;
+            color: #333;
+        }
+
+        .stage-young {
+            background: #6bcf7f;
+            color: white;
+        }
+
+        .stage-adult {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .birthday-countdown {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .birthday-countdown h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .countdown-display {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .birthday-date {
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎂 Age Calculator</h1>
+        
+        <div class="input-group">
+            <label for="birthdate">Enter Your Birth Date:</label>
+            <input type="date" id="birthdate" max="">
+        </div>
+
+        <button onclick="calculateAge()">Calculate Age</button>
+
+        <div class="result" id="result">
+            <div class="age-display">
+                <div class="emoji" id="stageEmoji">🎉</div>
+                <div>You are</div>
+                <div class="age-number" id="ageYears">0</div>
+                <div>years old</div>
+                <div class="stage-badge" id="stageBadge">Adult</div>
+                <div class="age-details">
+                    <div class="age-detail-item">
+                        <strong id="ageMonths">0</strong> months
+                    </div>
+                    <div class="age-detail-item">
+                        <strong id="ageDays">0</strong> days
+                    </div>
+                    <div class="age-detail-item">
+                        <strong id="ageHours">0</strong> hours
+                    </div>
+                    <div class="age-detail-item">
+                        <strong id="ageMinutes">0</strong> minutes
+                    </div>
+                </div>
+            </div>
+
+            <div class="birthday-countdown">
+                <h3>🎈 Next Birthday</h3>
+                <div class="countdown-display" id="countdown">0 days</div>
+                <div class="birthday-date" id="nextBirthday">January 1, 2024</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set max date to today
+        document.getElementById('birthdate').max = new Date().toISOString().split('T')[0];
+
+        function calculateAge() {
+            const birthdateInput = document.getElementById('birthdate').value;
+            
+            if (!birthdateInput) {
+                alert('Please enter your birth date');
+                return;
+            }
+
+            const birthdate = new Date(birthdateInput);
+            const today = new Date();
+
+            if (birthdate > today) {
+                alert('Birth date cannot be in the future');
+                return;
+            }
+
+            // Calculate age
+            let years = today.getFullYear() - birthdate.getFullYear();
+            let months = today.getMonth() - birthdate.getMonth();
+            let days = today.getDate() - birthdate.getDate();
+
+            if (days < 0) {
+                months--;
+                const prevMonth = new Date(today.getFullYear(), today.getMonth(), 0);
+                days += prevMonth.getDate();
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Calculate total months and days
+            const totalMonths = years * 12 + months;
+            const totalDays = Math.floor((today - birthdate) / (1000 * 60 * 60 * 24));
+            const totalHours = Math.floor((today - birthdate) / (1000 * 60 * 60));
+            const totalMinutes = Math.floor((today - birthdate) / (1000 * 60));
+
+            // Determine life stage
+            let stage, stageClass, emoji;
+            if (years < 18) {
+                stage = 'Child';
+                stageClass = 'stage-child';
+                emoji = '👶';
+            } else if (years < 40) {
+                stage = 'Young Adult';
+                stageClass = 'stage-young';
+                emoji = '🧑';
+            } else {
+                stage = 'Adult';
+                stageClass = 'stage-adult';
+                emoji = '👨';
+            }
+
+            // Calculate next birthday
+            let nextBirthday = new Date(today.getFullYear(), birthdate.getMonth(), birthdate.getDate());
+            
+            if (nextBirthday < today || (nextBirthday.getTime() === today.getTime())) {
+                nextBirthday.setFullYear(today.getFullYear() + 1);
+            }
+
+            const daysUntilBirthday = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+            
+            let countdownText;
+            if (daysUntilBirthday === 0) {
+                countdownText = '🎉 Today is your birthday! 🎉';
+            } else if (daysUntilBirthday === 1) {
+                countdownText = 'Tomorrow!';
+            } else {
+                countdownText = `${daysUntilBirthday} days`;
+            }
+
+            // Update display
+            document.getElementById('ageYears').textContent = years;
+            document.getElementById('ageMonths').textContent = totalMonths;
+            document.getElementById('ageDays').textContent = totalDays;
+            document.getElementById('ageHours').textContent = totalHours.toLocaleString();
+            document.getElementById('ageMinutes').textContent = totalMinutes.toLocaleString();
+            
+            const stageBadge = document.getElementById('stageBadge');
+            stageBadge.textContent = stage;
+            stageBadge.className = 'stage-badge ' + stageClass;
+            
+            document.getElementById('stageEmoji').textContent = emoji;
+            document.getElementById('countdown').textContent = countdownText;
+            document.getElementById('nextBirthday').textContent = nextBirthday.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+
+            // Show result
+            document.getElementById('result').classList.add('show');
+        }
+
+        // Allow Enter key to calculate
+        document.getElementById('birthdate').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateAge();
+            }
+        });
+    </script>
+</body>
+</html>
